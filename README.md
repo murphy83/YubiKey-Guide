@@ -860,7 +860,8 @@ $ gpg -o \path\to\dir\sub.gpg --armor --export-secret-subkeys $KEYID
 
 # Backup
 
-Once keys are moved to YubiKey, they cannot be moved again! Create an **encrypted** backup of the keyring and consider using a [paper copy](https://www.jabberwocky.com/software/paperkey/) of the keys as an additional backup measure.
+Once keys are moved to YubiKey, they cannot be moved again! Create an **encrypted** backup of the keyring and consider using a [paper copy](https://www.jabberwocky.com/software/paperkey/) of the keys as an additional backup measure. 
+If you did decide to not use a tempfs-directory, backing up is easy: Just keep your device in a secure place, if you need to update or tweak your keys, you will be able to just boot to the enviroment you just used. You should ensure that no networking is enabled upon boot in this case.
 
 **Tip** The ext2 filesystem (without encryption) can be mounted on both Linux and OpenBSD. Consider using a FAT32/NTFS filesystem for MacOS/Windows compatibility instead.
 
@@ -1364,8 +1365,21 @@ Please select where to store the key:
    (3) Authentication key
 Your selection? 3
 
+```
+## Make move permanent or not
+
+If you need to create multiple keys or you like to keep your storage device with its environment as a backup, you must not save the changes (they are transferred to the Yubikey though!), so just abort GNUPG 
+
+```console
+CTRL-C
+```
+
+If you decided to store your key on a separate device and you do not want to leave any trace
+
+```console
 gpg> save
 ```
+To make your changes permanent - the key will then be only stored in your backup and the Yubikey
 
 # Verify card
 
@@ -1385,6 +1399,12 @@ ssb>  rsa4096/0x3F29127E79649A3D 2017-10-09 [A] [expires: 2018-10-09]
 
 # Multiple YubiKeys
 
+## Restart after aborting GnuPG
+
+In case you aborted GnuPG via CTRL-C as described above, you may just restart the process with anohter YubiKey plugged in an prepared with your personal information.
+
+## Restoring your USB-Backup
+
 If you have additional (e.g. backup) security devices, restore the USB backup and repeat the [Configure Smartcard](#configure-smartcard) steps.
 
 ```console
@@ -1399,9 +1419,11 @@ $ cp -avi /mnt/encrypted-usb/tmp.XXX $GNUPGHOME
 $ cd $GNUPGHOME
 ```
 
-# Cleanup
+# Cleanup the workspace
 
-Ensure you have:
+If you decided to use your storage device as a backup-device (USB-Keys or SD-Cards with low volumes are quite cheap nowadays), just make sure you shutdown the computer used and store the device in a safe place (maybe along with a paper copy).
+
+If you want to leave nothing behind, ensure you have:
 
 * Saved the encryption, signing and authentication sub-keys to YubiKey.
 * Saved the YubiKey PINs which you changed from defaults.
